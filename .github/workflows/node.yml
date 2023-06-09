@@ -6,12 +6,23 @@ on:
     branches: [main]
 jobs:
   build:
+    env:
+      CI: true
+      MONGO_URL: mongodb://localhost/nasa-api
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use node.js version 18
+      - name: Use node.js version ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: ${{ matrix.node-version }}
+      - name: Use MongoDB from GitHub Action
+        uses: upercharge/mongodb-github-action@1.9.0
+        with:
+          mongodb-version: 6.0
       - run: npm install
       - run: npm run build --prefix client
+      - run: npm test
