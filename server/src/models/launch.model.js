@@ -1,7 +1,9 @@
 const axios = require('axios');
+const { SchemaComposer } = require('graphql-compose');
 
-const launches = require('./launch.mongo');
+const { launches } = require('./launch.mongo');
 const planets = require('./planets.mongo');
+const { launchQuery, launchMutation } = require('./launch.graphql');
 
 // const launches = new Map();
 
@@ -147,10 +149,24 @@ async function loadLaunchesData() {
   }
 }
 
+// GraphQL
+const schemaComposer = new SchemaComposer();
+
+schemaComposer.Query.addFields({
+  ...launchQuery,
+});
+
+schemaComposer.Mutation.addFields({
+  ...launchMutation,
+});
+
+const gqlSchema = schemaComposer.buildSchema();
+
 module.exports = {
   getAllLaunches,
   addNewLaunch,
   existsWithLaunchId,
   abortLaunchById,
   loadLaunchesData,
+  gqlSchema,
 };

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { composeWithMongoose } = require('graphql-compose-mongoose');
 
 const launchesSchema = new mongoose.Schema({
   flightNumber: {
@@ -33,4 +34,7 @@ const launchesSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Launch', launchesSchema);
+const launches = mongoose.model('Launch', launchesSchema);
+const launchesTC = composeWithMongoose(launches);
+
+module.exports = { launches, launchesTC };
