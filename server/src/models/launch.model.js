@@ -35,13 +35,29 @@ async function getAllLaunches(skip, limit) {
 }
 
 async function getLatestFlightNumber() {
-  const latestLaunch = await launches.findOne({}).sort('-flightNumber');
+  pipeline = [
+    {
+      $sort: {
+        flightNumber: -1,
+      },
+    },
+    {
+      $limit: 1,
+    },
+    {
+      $project: {
+        flightNumber: 1,
+      },
+    },
+  ];
 
-  if (!latestLaunch) {
+  const latestLaunch = await launches.aggregate(pipeline);
+
+  if (latestLaunch.length === 0) {
     return DEFAULT_FLIGHTNUMBER;
   }
 
-  return latestLaunch.flightNumber;
+  return latestLaunch[0].flightNumber;
 }
 
 async function saveLaunch(launch) {
