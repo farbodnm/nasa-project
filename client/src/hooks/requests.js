@@ -1,4 +1,4 @@
-const API_URL = 'v1';
+const API_URL = 'v1/api';
 
 // Load planets and return as JSON.
 async function httpGetPlanets() {
